@@ -378,25 +378,20 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                                     LOGGER.i("DiffrerTime" + Differtime);
 
-                                    if (Differtime > 2000){
-                                        time1 = System.currentTimeMillis();
-                                        //int int_result = Integer.parseInt(str_result[0].replaceAll("[^0-9]", ""));
+                                    if (distance < 5.0) {
+                                        if (Differtime > 2000) {
+                                            time1 = System.currentTimeMillis();
+                                            //int int_result = Integer.parseInt(str_result[0].replaceAll("[^0-9]", ""));
 
+                                            if (location_center[0] < 100) {
+                                                tts.speak(classes[index] + " 왼쪽에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            } else if (location_center[0] > 250) {
+                                                tts.speak(classes[index] + " 오른쪽에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            } else {
+                                                tts.speak(classes[index] + " 전방에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            }
 
-
-                                        if (b_size > classes_threshold_5[index]){
-                                            if (location_center[0] < 100){
-                                                tts.speak(classes[index] + " 왼쪽에 있습니다.", TextToSpeech.QUEUE_FLUSH,null);
-                                            }
-                                            else if (location_center[0] > 250){
-                                                tts.speak(classes[index] + " 오른쪽에 있습니다.", TextToSpeech.QUEUE_FLUSH,null);
-                                            }
-                                            else{
-                                                tts.speak(classes[index] + " 전방에 있습니다.", TextToSpeech.QUEUE_FLUSH,null);
-                                            }
                                         }
-
-
                                     }
                                 }
 
