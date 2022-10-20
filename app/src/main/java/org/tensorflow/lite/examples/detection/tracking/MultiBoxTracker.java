@@ -222,7 +222,16 @@ public class MultiBoxTracker {
       trackedRecognition.title = potential.second.getTitle();
       trackedRecognition.distance = potential.second.getDistance();
 //      trackedRecognition.color = COLORS[trackedObjects.size() % COLORS.length];
-      trackedRecognition.color = COLORS[potential.second.getDetectedClass() % COLORS.length];
+      //trackedRecognition.color = COLORS[potential.second.getDetectedClass() % COLORS.length];
+      if (trackedRecognition.distance == -1.0){
+        trackedRecognition.color = COLORS[1];
+      }else if(trackedRecognition.distance == -2.0){
+        trackedRecognition.color = COLORS[6];
+      }else{
+        trackedRecognition.color = COLORS[3];
+      }
+      Log.d(TAG,"trackedRecognition.distance : " + trackedRecognition.distance);
+      //trackedRecognition.color = COLORS[0];
       trackedObjects.add(trackedRecognition);
 
 //      if (trackedObjects.size() >= COLORS.length) {

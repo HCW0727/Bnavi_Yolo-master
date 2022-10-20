@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
@@ -31,6 +32,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
+import android.view.Display;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -103,7 +105,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             public void onInit(int status) {
                 if(status != ERROR) {
                     // 언어를 선택한다.
+                    tts.setSpeechRate(1.5f);
                     tts.setLanguage(Locale.KOREAN);
+
                 }
             }
         });
@@ -248,6 +252,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         final long currTimestamp = timestamp;
         trackingOverlay.postInvalidate();
 
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        int width = size.x;
+        int height = size.y;
+
         String[] classes = {"바리케이드가","벤치가","자전거가","볼라드가","버스가","자동차가","손수레가","고양이가","의자가","개가","소화전이","무인 단말기가",
         "오토바이가","안내판이","주차 요금 정산기가","사람이","가로등이","화분이","스쿠터가","정류장이","유모차가","책상이","신호등이","교통표지판이","가로수가","트럭이","휠체어가"};
 
@@ -256,6 +267,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         "truck","wheelchair"};
 
 
+        //볼라드, 자동차, 오토바이,
         Integer[] classes_threshold_5 = {0,0,0,1000,0,20000,0,0,0,0,0,0,0,3500,0,4500,0,0,0,0,0,0,0,0,0,0,0};
         Integer[] classes_threshold_20 = {0,0,0,100,0,700,0,0,0,0,0,0,0,3500,0,630,0,0,0,0,0,0,0,0,0,0,0};
 
@@ -358,7 +370,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 }else{
                                     distance = (b_size - classes_threshold_5[index]) / (classes_threshold_20[index] - classes_threshold_5[index]) * 15.0 + 5.0;
                                     distance = Math.round(distance*10)/10.0;
+                                    tts.setPitch(2.5f);
                                 }
+//                                distance = (b_size - classes_threshold_5[index]) / (classes_threshold_20[index] - classes_threshold_5[index]) * 15.0 + 5.0;
+//                                distance = Math.round(distance*10)/10.0;
 
 
                                 //Log.d(TAG,"str_result : " + str_result[1] + " |  b_size : " + b_size + " | distance : " + distance);
@@ -378,19 +393,27 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                                     LOGGER.i("DiffrerTime" + Differtime);
 
-                                    if (distance < 5.0) {
+                                    if (distance == -1.0) {
                                         if (Differtime > 2000) {
                                             time1 = System.currentTimeMillis();
                                             //int int_result = Integer.parseInt(str_result[0].replaceAll("[^0-9]", ""));
 
-                                            if (location_center[0] < 100) {
-                                                tts.speak(classes[index] + " 왼쪽에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                            } else if (location_center[0] > 250) {
-                                                tts.speak(classes[index] + " 오른쪽에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                            } else {
-                                                tts.speak(classes[index] + " 전방에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            if (location_center[0] < width*1 / 5) {
+//                                                tts.speak(classes[index] + "10시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                                tts.speak(classes[index] + "10시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            } else if (location_center[0] < width * 2 / 5) {
+//                                                tts.speak(classes[index] + "11시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                                tts.speak(classes[index] + "11시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            } else if (location_center[0] < width * 3 / 5) {
+//                                                tts.speak(classes[index] + "12시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                                tts.speak(classes[index] + "12시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            } else if (location_center[0] < width * 4 / 5){
+//                                                tts.speak(classes[index] + "1시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                                tts.speak(classes[index] + "1시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                            } else if (location_center[0] < width * 5 / 5){
+//                                                tts.speak(classes[index] + "2시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                                tts.speak(classes[index] + "2시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
                                             }
-
                                         }
                                     }
                                 }
