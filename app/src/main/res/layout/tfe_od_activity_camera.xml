@@ -45,12 +45,21 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/tfl2_logo" />
+                android:src="@drawable/logogo" />
         </androidx.appcompat.widget.Toolbar>
 
     </RelativeLayout>
 
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="Yolo Tiny"
+        android:id="@+id/Btn_TinyYolo"
+        android:textColor="#FFFFFF"/>
+
     <include
         android:id="@+id/bottom_sheet_layout"
+        android:visibility="gone"
         layout="@layout/tfe_od_layout_bottom_sheet" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

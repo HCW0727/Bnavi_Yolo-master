@@ -33,6 +33,8 @@ import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -94,6 +96,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     public long time1 = System.currentTimeMillis();
 
     private static final String TAG = "DetectorActivity";
+
+    private Boolean Yolo_tiny;
+
+    protected String[] classes = {"바리케이드가","벤치가","자전거가","볼라드가","버스가","자동차가","손수레가","고양이가","의자가","개가","소화전이","무인 단말기가",
+            "오토바이가","안내판이","주차 요금 정산기가","사람이","가로등이","화분이","스쿠터가","정류장이","유모차가","책상이","신호등이","교통표지판이","가로수가","트럭이","휠체어가"};
+
+    protected String[] classes_org = {"barricade","bench","bicycle","bollard","bus","car","carrier","cat","chair","dog","fire_hydrant","kiosk","motorcycle",
+            "movable_signage","parking_meter","person","pole","potted_plant","scooter","stop","stroller","table","traffic_light","traffic_sign","tree_trunk",
+            "truck","wheelchair"};
 
 
 
@@ -247,7 +258,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     }
 
     @Override
-    protected void processImage() {
+    protected void processImage(Boolean isTiny) {
         ++timestamp;
         final long currTimestamp = timestamp;
         trackingOverlay.postInvalidate();
@@ -259,12 +270,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         int width = size.x;
         int height = size.y;
 
-        String[] classes = {"바리케이드가","벤치가","자전거가","볼라드가","버스가","자동차가","손수레가","고양이가","의자가","개가","소화전이","무인 단말기가",
-        "오토바이가","안내판이","주차 요금 정산기가","사람이","가로등이","화분이","스쿠터가","정류장이","유모차가","책상이","신호등이","교통표지판이","가로수가","트럭이","휠체어가"};
 
-        String[] classes_org = {"barricade","bench","bicycle","bollard","bus","car","carrier","cat","chair","dog","fire_hydrant","kiosk","motorcycle",
-        "movable_signage","parking_meter","person","pole","potted_plant","scooter","stop","stroller","table","traffic_light","traffic_sign","tree_trunk",
-        "truck","wheelchair"};
+
 
 
         //볼라드, 자동차, 오토바이,
@@ -295,6 +302,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     @Override
                     public void run() {
 
+                        Toast.makeText(getApplicationContext(),"Hello",Toast.LENGTH_SHORT);
+
+                        Log.d(TAG,"Hello!!");
                         LOGGER.i("Running detection on image " + currTimestamp);
                         final long startTime = SystemClock.uptimeMillis();
                         final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
@@ -393,27 +403,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                                     LOGGER.i("DiffrerTime" + Differtime);
 
+                                    
                                     if (distance == -1.0) {
                                         if (Differtime > 2000) {
                                             time1 = System.currentTimeMillis();
                                             //int int_result = Integer.parseInt(str_result[0].replaceAll("[^0-9]", ""));
 
-                                            if (location_center[0] < width*1 / 5) {
-//                                                tts.speak(classes[index] + "10시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                                tts.speak(classes[index] + "10시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                            } else if (location_center[0] < width * 2 / 5) {
-//                                                tts.speak(classes[index] + "11시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                                tts.speak(classes[index] + "11시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                            } else if (location_center[0] < width * 3 / 5) {
-//                                                tts.speak(classes[index] + "12시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                                tts.speak(classes[index] + "12시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                            } else if (location_center[0] < width * 4 / 5){
-//                                                tts.speak(classes[index] + "1시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                                tts.speak(classes[index] + "1시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                            } else if (location_center[0] < width * 5 / 5){
-//                                                tts.speak(classes[index] + "2시 방향" + distance + "미터에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                                tts.speak(classes[index] + "2시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
-                                            }
+                                            PlayTTS(isTiny,location_center[0],width,index);
                                         }
                                     }
                                 }
@@ -428,7 +424,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                                 result.setLocation(location);
 
-                                mappedRecognitions.add(result );
+//                                Log.d(TAG,"index!! : " + index);
+                                if(isTiny){ mappedRecognitions.add(result );}
+                                else if(index == 3 || index == 5 || index == 15){
+
+                                    mappedRecognitions.add(result); }
 
                                 Log.d(TAG, "mappedRecognitions = " + String.valueOf(mappedRecognitions));
 
@@ -478,5 +478,25 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     @Override
     protected void setNumThreads(final int numThreads) {
         runInBackground(() -> detector.setNumThreads(numThreads));
+    }
+
+    protected void PlayTTS(boolean isTiny, Float location, int width,int index) {
+        if (!isTiny) {
+            //볼라드 : 3  자동차 : 5  사람 : 15
+            if (index != 3 && index != 5 && index != 15) {
+                return;
+            }
+        }
+        if (location < width * 1 / 5) {
+            tts.speak(classes[index] + "10시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+        } else if (location < width * 2 / 5) {
+            tts.speak(classes[index] + "11시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+        } else if (location < width * 3 / 5) {
+            tts.speak(classes[index] + "12시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+        } else if (location < width * 4 / 5) {
+            tts.speak(classes[index] + "1시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+        } else{
+            tts.speak(classes[index] + "2시 방향에 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 }
