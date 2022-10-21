@@ -106,6 +106,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             "movable_signage","parking_meter","person","pole","potted_plant","scooter","stop","stroller","table","traffic_light","traffic_sign","tree_trunk",
             "truck","wheelchair"};
 
+    protected Integer[] classes_selected = {3,5,15};
+
 
 
 
@@ -426,7 +428,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
 //                                Log.d(TAG,"index!! : " + index);
                                 if(isTiny){ mappedRecognitions.add(result );}
-                                else if(index == 3 || index == 5 || index == 15){
+                                else if(Arrays.asList(classes_selected).indexOf(index) != -1){
 
                                     mappedRecognitions.add(result); }
 
@@ -483,7 +485,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     protected void PlayTTS(boolean isTiny, Float location, int width,int index) {
         if (!isTiny) {
             //볼라드 : 3  자동차 : 5  사람 : 15
-            if (index != 3 && index != 5 && index != 15) {
+//            if (index != 3 && index != 5 && index != 15) {
+//                return;
+//            }
+            if(Arrays.asList(classes_selected).indexOf(index) != -1){
                 return;
             }
         }
